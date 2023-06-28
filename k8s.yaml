@@ -1,0 +1,53 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: klinika
+  labels:
+    k8s-app: klinika
+spec:
+  type: NodePort
+  selector:
+    app: klinika
+  ports:
+    - name:
+      appProtocol: http
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
+ 
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: klinika
+  namespace: default
+  labels:
+    k8s-app: klinika
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      k8s-app: klinika
+  template:
+    metadata:
+      name: klinika
+      labels:
+        k8s-app: klinika
+    spec:
+      containers:
+        - name: klinika
+          image: kirillkus/app2
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:postgresql://host.docker.internal:5432/Klinika
+            - name: SPRING_DATASOURCE_USERNAME
+              value: postgres
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: admin
+            - name: SPRING_JPA_HIBERNATE_DDL_AUTO
+              value: none
+          securityContext:
+            privileged: true
+---
+
+kubectl expose deployment klinika --type=NodePort --port=8080
