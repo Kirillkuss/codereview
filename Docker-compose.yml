@@ -1,0 +1,20 @@
+version: '3.4'
+
+volumes:
+  pg_project:
+
+services:
+  Klinik:
+    image: app2
+    ports:
+      - "8081:8080"
+    build:
+      context: .
+    container_name: app2
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://host.docker.internal:5432/Klinika
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=admin
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=none
+      - ADDITIONAL_PATH=/klinika/swagger-ui/index.html
+
